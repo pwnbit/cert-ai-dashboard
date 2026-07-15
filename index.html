@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CERT AI Agent Virtual Office Simulator (v2)</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <div class="header-left">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                </div>
+                <div>
+                    <h1>CERT AI Virtual Office <span style="font-size: 11px; background: var(--color-analyst); color: white; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">v2.0</span></h1>
+                    <p class="subtitle">Multi-Agent Incident Response & Critical Escalation Simulator</p>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="status-indicator">
+                    <span class="pulse-dot"></span>
+                    <span id="simulation-status">SYSTEM ACTIVE</span>
+                </div>
+                <div class="timestamp" id="real-timestamp">2026-07-15 00:05:00</div>
+            </div>
+        </header>
+
+        <!-- Main Workspace -->
+        <main class="app-content">
+            <!-- Left Panel: Controls -->
+            <section class="panel control-panel">
+                <div class="panel-header">
+                    <h2><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"></line><line x1="4" y1="10" x2="4" y2="3"></line><line x1="12" y1="21" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="3"></line><line x1="20" y1="21" x2="20" y2="16"></line><line x1="20" y1="12" x2="20" y2="3"></line><line x1="1" y1="14" x2="7" y2="14"></line><line x1="9" y1="8" x2="15" y2="8"></line><line x1="17" y1="16" x2="23" y2="16"></line></svg> Control Center</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="control-group">
+                        <label>Simulate Datadog SIEM Alert</label>
+                        <div class="alert-buttons">
+                            <!-- Scenario 1: DDoS Attack (Tier 1 -> Validator Approve) -->
+                            <button class="btn btn-alert btn-ddos" onclick="triggerAlert('ddos')">
+                                <span class="btn-icon">💥</span>
+                                <div class="btn-text">
+                                    <span class="btn-title">DDoS Attack</span>
+                                    <span class="btn-desc">Tier 1 Ingestion ➡️ Approve</span>
+                                </div>
+                            </button>
+                            <!-- Scenario 2: Brute Force (Critical Asset -> Validator Reject) -->
+                            <button class="btn btn-alert btn-bruteforce" onclick="triggerAlert('bruteforce')">
+                                <span class="btn-icon">🔑</span>
+                                <div class="btn-text">
+                                    <span class="btn-title">Brute Force</span>
+                                    <span class="btn-desc">Shared Asset ➡️ Reject</span>
+                                </div>
+                            </button>
+                            <!-- Scenario 3: Malware Beacon (Tier 2 Escalation -> Validator Approve) -->
+                            <button class="btn btn-alert btn-malware" onclick="triggerAlert('malware')">
+                                <span class="btn-icon">🦠</span>
+                                <div class="btn-text">
+                                    <span class="btn-title">Malware Beacon</span>
+                                    <span class="btn-desc">Tier 2 Escalation ➡️ Approve</span>
+                                </div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="control-group">
+                        <label>Simulation Settings</label>
+                        <div class="settings-row">
+                            <span>Simulation Speed</span>
+                            <div class="speed-selector">
+                                <button class="speed-btn active" data-speed="1">1x</button>
+                                <button class="speed-btn" data-speed="2">2x</button>
+                                <button class="speed-btn" data-speed="4">4x</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-group active-threats">
+                        <label>Threat Intelligence Feed (TI)</label>
+                        <div class="ti-database">
+                            <div class="ti-item"><span class="badge badge-danger">198.51.100.42</span> <span>Known C2 server</span></div>
+                            <div class="ti-item"><span class="badge badge-warning">malicious-beacon.ru</span> <span>DGA Domain</span></div>
+                            <div class="ti-item"><span class="badge badge-safe">8.8.8.8</span> <span>Google Public DNS (Shared)</span></div>
+                            <div class="ti-item"><span class="badge badge-safe">203.0.113.88</span> <span>Common Auth Server</span></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Center Panel: Virtual Office Visualization -->
+            <section class="panel office-panel">
+                <div class="panel-header">
+                    <h2><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> AI Agent Virtual Office</h2>
+                    <div class="office-legend">
+                        <span class="legend-item"><span class="dot collector"></span> Collector</span>
+                        <span class="legend-item"><span class="dot dd-agent"></span> DD Agent</span>
+                        <span class="legend-item"><span class="dot analyst"></span> T1 Analyst</span>
+                        <span class="legend-item"><span class="dot tier2-analyst"></span> T2 Analyst</span>
+                        <span class="legend-item"><span class="dot ti"></span> TI</span>
+                        <span class="legend-item"><span class="dot validator"></span> Validator</span>
+                    </div>
+                </div>
+                <div class="panel-body office-map-container">
+                    <!-- Laser / Packet flow overlay -->
+                    <svg class="flow-overlay" id="flow-svg">
+                        <path id="flow-path-1" d="" class="flow-line" />
+                        <path id="flow-path-2" d="" class="flow-line" />
+                        <path id="flow-path-3" d="" class="flow-line" />
+                    </svg>
+
+                    <!-- Office Floor Map -->
+                    <div class="office-map" id="office-floor">
+                        
+                        <!-- Datadog SIEM Source Node -->
+                        <div class="office-node system-node" id="node-datadog">
+                            <div class="node-icon">📊</div>
+                            <div class="node-label">Datadog SIEM</div>
+                            <div class="node-badge" id="datadog-badge">STANDBY</div>
+                        </div>
+
+                        <!-- Agent 1: Collector -->
+                        <div class="office-node agent-node" id="node-collector">
+                            <div class="agent-avatar collector-avatar"><div class="character">🤖</div></div>
+                            <div class="agent-details">
+                                <div class="agent-name">Collector Agent</div>
+                                <div class="agent-role">Ingestion & Normalizer</div>
+                            </div>
+                            <div class="agent-status" id="collector-status">IDLE</div>
+                            <div class="speech-bubble" id="collector-speech">System Monitoring...</div>
+                        </div>
+
+                        <!-- Agent 2: Datadog Agent (Query Assistant) -->
+                        <div class="office-node agent-node" id="node-dd-agent">
+                            <div class="agent-avatar dd-agent-avatar"><div class="character">🐕</div></div>
+                            <div class="agent-details">
+                                <div class="agent-name">Datadog Agent</div>
+                                <div class="agent-role">Telemetry & Log Query</div>
+                            </div>
+                            <div class="agent-status" id="dd-agent-status">IDLE</div>
+                            <div class="speech-bubble" id="dd-agent-speech">Telemetry Synced.</div>
+                        </div>
+
+                        <!-- Agent 3: Tier 1 Analyst -->
+                        <div class="office-node agent-node" id="node-analyst">
+                            <div class="agent-avatar analyst-avatar"><div class="character">🧠</div></div>
+                            <div class="agent-details">
+                                <div class="agent-name">Tier 1 Analyst AI</div>
+                                <div class="agent-role">Initial Triage</div>
+                            </div>
+                            <div class="agent-status" id="analyst-status">IDLE</div>
+                            <div class="speech-bubble" id="analyst-speech">Waiting for signals...</div>
+                        </div>
+
+                        <!-- Agent 4: Tier 2 Analyst (Escalation Node) -->
+                        <div class="office-node agent-node" id="node-tier2-analyst">
+                            <div class="agent-avatar tier2-avatar"><div class="character">🕵️‍♂️</div></div>
+                            <div class="agent-details">
+                                <div class="agent-name">Tier 2 Analyst AI</div>
+                                <div class="agent-role">Deep Analysis (Advanced)</div>
+                            </div>
+                            <div class="agent-status" id="tier2-analyst-status">IDLE</div>
+                            <div class="speech-bubble" id="tier2-analyst-speech">Standby for Escalation.</div>
+                        </div>
+
+                        <!-- Agent 5: TI Expert -->
+                        <div class="office-node agent-node" id="node-ti">
+                            <div class="agent-avatar ti-avatar"><div class="character">🔍</div></div>
+                            <div class="agent-details">
+                                <div class="agent-name">TI Expert Agent</div>
+                                <div class="agent-role">Threat Intelligence</div>
+                            </div>
+                            <div class="agent-status" id="ti-status">IDLE</div>
+                            <div class="speech-bubble" id="ti-speech">Database Connected.</div>
+                        </div>
+
+                        <!-- Agent 6: Validator (Critique Gatekeeper) -->
+                        <div class="office-node agent-node" id="node-validator">
+                            <div class="agent-avatar validator-avatar"><div class="character">⚖️</div></div>
+                            <div class="agent-details">
+                                <div class="agent-name">Validator Agent</div>
+                                <div class="agent-role">Impact & Logic Auditor</div>
+                            </div>
+                            <div class="agent-status" id="validator-status">IDLE</div>
+                            <div class="speech-bubble" id="validator-speech">Audit Queue Clean.</div>
+                        </div>
+
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Panel: Agent Logs / Terminal -->
+            <section class="panel terminal-panel">
+                <div class="panel-header">
+                    <h2><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 17 10 11 4 5"></polyline><line x1="12" y1="19" x2="20" y2="19"></line></svg> Agent Dialogue & Activity Logs</h2>
+                    <button class="clear-btn" onclick="clearLogs()">Clear</button>
+                </div>
+                <div class="panel-body terminal-body" id="terminal-output">
+                    <div class="log-line system-msg">[SYSTEM] CERT AI Virtual Office v2.0 initialized. Ready for simulation.</div>
+                    <div class="log-line system-msg">[SYSTEM] Collector Agent listening to Datadog Webhook stream...</div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Bottom Panel: Metrics & Slack Notifications -->
+        <footer class="app-footer">
+            <!-- Metrics -->
+            <div class="metrics-container">
+                <div class="metric-card">
+                    <div class="metric-val" id="metric-alerts">0</div>
+                    <div class="metric-label">Ingested Alerts</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val text-success" id="metric-blocks">0</div>
+                    <div class="metric-label">Approved Blocks</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val text-warning" id="metric-rejects">0</div>
+                    <div class="metric-label">Rejected Proposals</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-val text-safe" id="metric-threat-level">MONITORING</div>
+                    <div class="metric-label">Current Threat Level</div>
+                </div>
+            </div>
+
+            <!-- Live Incident Slack Channel (Interactive Mockup) -->
+            <div class="slack-mockup">
+                <div class="slack-header">
+                    <span class="slack-icon">#</span>
+                    <span class="slack-channel-name">incident-alerts-tier1</span>
+                    <span class="slack-badge">LIVE FEED</span>
+                </div>
+                <div class="slack-messages" id="slack-message-feed">
+                    <div class="slack-empty-msg">No active incidents reported to Slack yet. Trigger an alert above!</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
